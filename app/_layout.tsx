@@ -16,7 +16,7 @@ SplashScreen.preventAutoHideAsync();
  * at a time, and expo-router redirects automatically when the guards flip:
  *  - no session              → (auth) sign-in
  *  - session, no profile yet → onboarding (choose username)
- *  - session + profile       → the app (tabs)
+ *  - session + profile       → the app shell (app)
  */
 function RootNavigator() {
   const colorScheme = useColorScheme();
@@ -44,8 +44,7 @@ function RootNavigator() {
         </Stack.Protected>
 
         <Stack.Protected guard={signedIn && !needsOnboarding}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+          <Stack.Screen name="(app)" />
         </Stack.Protected>
       </Stack>
       <StatusBar style="auto" />
