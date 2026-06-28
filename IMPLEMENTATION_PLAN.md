@@ -31,9 +31,15 @@ the feature set is purely spatial.
 
 ## 3. Stack & hard constraints
 
-- **Expo + React Native (TypeScript)** on a **custom dev client + EAS Build** —
-  **not Expo Go** (camera, sensors, glass effect, media capture all need custom
+- **Expo SDK 54 + React Native 0.81 (TypeScript)** on a **custom dev client +
+  EAS Build** — **not Expo Go** (camera, sensors, media capture all need custom
   native modules).
+  - **Pinned to SDK 54** (not the latest 56). Local toolchain is **Xcode 16.4 /
+    Swift 6.1**; **Expo SDK 55+ require Xcode 26 / Swift 6.2** and fail to compile
+    here (`ExpoModulesJSI` → `Swift tools version 6.2.0 but installed is 6.1.0`).
+    SDK 54 builds locally today and still ships every library v1 needs. Revisit
+    the SDK bump only after upgrading Xcode. App uses root-level `app/` routing
+    with the `@/* → ./*` path alias.
 - **Supabase**: Postgres + **PostGIS**, Auth (email+password), Storage (media),
   Row-Level Security, RPC for the geo query. No custom backend server needed for
   v1; Edge Functions only for moderation/cleanup hooks.
