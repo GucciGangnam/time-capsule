@@ -1,12 +1,15 @@
+import { Image } from 'expo-image';
+import { useVideoPlayer, VideoView } from 'expo-video';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Surface } from '@/components/Surface';
+import { mediaPublicUrl } from '@/features/posts/media';
 import type { NearbyPost } from '@/features/posts/usePostsWithinRadius';
-import { colors } from '@/lib/theme';
+import { colors, radius } from '@/lib/theme';
 
-/** Tap-a-pin detail: a floating card above the mode strip with the post body,
- *  author, distance, and a like toggle. Tap the backdrop to dismiss. */
+/** Tap-a-pin detail: a floating card above the mode strip with the post media,
+ *  body, author, distance, and a like toggle. Tap the backdrop to dismiss. */
 export function PostDetailSheet({
   post,
   onClose,
@@ -17,10 +20,25 @@ export function PostDetailSheet({
   onToggleLike: () => void;
 }) {
   const insets = useSafeAreaInsets();
+  const photoUrl = post.type === 'photo' && post.media_path ? mediaPublicUrl(post.media_path) : null;
+  const videoUrl = post.type === 'video' && post.media_path ? mediaPublicUrl(post.media_path) : null;
+
+  // Hook must run unconditionally; a null source just means no video.
+  const player = useVideoPlayer(videoUrl, (p) => {
+    p.loop = true;
+  });
+
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
       <Pressable style={StyleSheet.absoluteFill} onPress={onClose} />
       <Surface style={[styles.sheet, { bottom: insets.bottom + 74 }]}>
+        {photoUrl ? (
+          <Image source={{ uri: photoUrl }} style={styles.media} contentFit="cover" transition={150} />
+        ) : null}
+        {videoUrl ? (
+          <VideoView style={styles.media} player={player} contentFit="cover" nativeControls allowsFullscreen />
+        ) : null}
+
         <View style={styles.headerRow}>
           <Text style={styles.author}>@{post.author_username}</Text>
           <Text style={styles.distance}>
@@ -42,7 +60,8 @@ export function PostDetailSheet({
 }
 
 const styles = StyleSheet.create({
-  sheet: { position: 'absolute', left: 10, right: 10, padding: 18, gap: 12 },
+  sheet: { position: 'absolute', left: 10, right: 10, padding: 16, gap: 12 },
+  media: { width: '100%', height: 200, borderRadius: radius.md, backgroundColor: colors.elevated },
   headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   author: { color: colors.text, fontSize: 17, fontWeight: '700' },
   distance: { color: colors.textDim, fontSize: 13 },

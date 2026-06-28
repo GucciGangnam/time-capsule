@@ -13,6 +13,7 @@ export default function AppLayout() {
         }}>
         <Stack.Screen name="index" />
         <Stack.Screen name="change-password" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="create" options={{ presentation: 'modal' }} />
       </Stack>
       <StatusBar style="light" />
     </>

@@ -57,7 +57,14 @@
         {
           "locationWhenInUsePermission": "Time Capsule uses your location to place and find capsules within 30 m of you."
         }
-      ]
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Time Capsule needs access to your photos so you can attach one to a capsule."
+        }
+      ],
+      "expo-video"
     ],
     "experiments": {
       "typedRoutes": true,

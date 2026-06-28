@@ -144,6 +144,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_post: {
+        Args: {
+          body?: string
+          lat: number
+          lng: number
+          media_path?: string
+          post_type: Database["public"]["Enums"]["post_type"]
+        }
+        Returns: string
+      }
       posts_within_radius: {
         Args: {
           cursor_id?: string

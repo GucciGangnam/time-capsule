@@ -1,6 +1,7 @@
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { router, useFocusEffect } from 'expo-router';
 import * as Location from 'expo-location';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Linking,
   Pressable,
@@ -64,6 +65,7 @@ export function ArCameraPane({ active }: { active: boolean }) {
 function ArView({ active }: { active: boolean }) {
   const { session } = useAuth();
   const uid = session?.user?.id;
+  const insets = useSafeAreaInsets();
   const { width, height } = useWindowDimensions();
   const pose = useArSensors(active);
   const [coords, setCoords] = useState<Coords | null>(null);
@@ -91,7 +93,14 @@ function ArView({ active }: { active: boolean }) {
     () => (coords ? { lat: coords.lat, lng: coords.lng } : null),
     [coords?.lat, coords?.lng],
   );
-  const { posts, toggleLike } = usePostsWithinRadius(userLoc);
+  const { posts, toggleLike, refetch } = usePostsWithinRadius(userLoc);
+
+  // Refetch when the screen regains focus (e.g. after creating a post).
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   const selected = posts.find((p) => p.id === selectedId) ?? null;
   const size = { width, height };
@@ -114,6 +123,21 @@ function ArView({ active }: { active: boolean }) {
           />
         );
       })}
+
+      <View style={[styles.fabWrap, { bottom: insets.bottom + 80 }]} pointerEvents="box-none">
+        {coords ? (
+          <Pressable
+            style={({ pressed }) => [styles.fab, pressed && { opacity: 0.85 }]}
+            onPress={() =>
+              router.push({
+                pathname: '/(app)/create',
+                params: { lat: coords.lat, lng: coords.lng },
+              })
+            }>
+            <Text style={styles.fabPlus}>+</Text>
+          </Pressable>
+        ) : null}
+      </View>
 
       <Hud coords={coords} count={posts.length} />
 
@@ -183,6 +207,21 @@ const styles = StyleSheet.create({
   hudPill: { paddingHorizontal: 16, paddingVertical: 8 },
   countPill: { paddingHorizontal: 12, paddingVertical: 5 },
   hudText: { color: colors.text, fontSize: 13, fontWeight: '600' },
+
+  fabWrap: { position: 'absolute', left: 0, right: 0, alignItems: 'center' },
+  fab: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: colors.white,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  fabPlus: { color: colors.bg, fontSize: 34, fontWeight: '300', lineHeight: 38, marginTop: -2 },
 
   gate: { alignItems: 'center', justifyContent: 'center', paddingHorizontal: 36, gap: 12 },
   reticle: {
