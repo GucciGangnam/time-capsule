@@ -23,6 +23,7 @@ import {
   takePhoto,
   type SelectedMedia,
 } from '@/features/posts/media';
+import { emitPostsChanged } from '@/features/posts/refreshBus';
 import { colors, radius } from '@/lib/theme';
 
 export default function CreatePost() {
@@ -65,6 +66,7 @@ export default function CreatePost() {
     setBusy(true);
     try {
       await submitPost(uid, { lat, lng }, body, media);
+      emitPostsChanged();
       router.back();
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Something went wrong.');

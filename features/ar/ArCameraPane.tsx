@@ -17,6 +17,7 @@ import { useAuth } from '@/features/auth/AuthProvider';
 import { Pin } from '@/features/ar/Pin';
 import { PostDetailSheet } from '@/features/ar/PostDetailSheet';
 import { useArSensors } from '@/features/ar/useArSensors';
+import { onPostsChanged } from '@/features/posts/refreshBus';
 import { usePostsWithinRadius } from '@/features/posts/usePostsWithinRadius';
 import { projectPost } from '@/lib/geo';
 import { colors, radius } from '@/lib/theme';
@@ -101,6 +102,9 @@ function ArView({ active }: { active: boolean }) {
       refetch();
     }, [refetch]),
   );
+
+  // Reliable refresh after creating a post (modal focus effects don't re-fire).
+  useEffect(() => onPostsChanged(refetch), [refetch]);
 
   const selected = posts.find((p) => p.id === selectedId) ?? null;
   const size = { width, height };
