@@ -10,7 +10,10 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.guccigangnam.timecapsule"
+      "bundleIdentifier": "com.guccigangnam.timecapsule",
+      "infoPlist": {
+        "NSMotionUsageDescription": "Time Capsule uses motion sensors to aim capsules in the right direction as you move your phone."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -39,6 +42,20 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Time Capsule uses the camera to show capsules floating around you in AR.",
+          "microphonePermission": "Time Capsule uses the microphone when you record a video capsule.",
+          "recordAudioAndroid": true
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Time Capsule uses your location to place and find capsules within 30 m of you."
         }
       ]
     ],

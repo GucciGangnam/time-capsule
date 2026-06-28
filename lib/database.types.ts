@@ -156,6 +156,7 @@ export type Database = {
         Returns: {
           author_id: string
           author_username: string
+          bearing_deg: number | null
           body: string
           created_at: string
           distance_m: number
